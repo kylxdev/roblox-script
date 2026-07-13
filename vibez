@@ -1,0 +1,233 @@
+-- === VIBEZ UPGRADE TREE | FULL ANALYSIS + EXPLOIT GENERATOR ===
+-- Автор: kylxdev | 2026 Modern Edition
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "Vibez | Deep Analysis + Exploit",
+    LoadingTitle = "Анализ игры...",
+    LoadingSubtitle = "by kylxdev",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "VibezDeep",
+        FileName = "Config"
+    }
+})
+
+local AnalysisTab = Window:CreateTab("Анализ", 4483362458)
+local ExploitTab = Window:CreateTab("Эксплойт", 4483362458)
+local MovementTab = Window:CreateTab("Movement", 4483362458)
+local MiscTab = Window:CreateTab("Misc", 4483362458)
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local LocalPlayer = Players.LocalPlayer
+
+local Events = ReplicatedStorage:WaitForChild("Events", 5)
+
+-- ==================== ГЛУБОКИЙ АНАЛИЗ ====================
+local analysisText = ""
+
+local function RunFullAnalysis()
+    analysisText = "=== ПОЛНЫЙ АНАЛИЗ VIBEZ UPGRADE TREE ===\n\n"
+    
+    -- 1. Remotes
+    analysisText = analysisText .. "=== REMOTE EVENTS ===\n"
+    for _, v in pairs(ReplicatedStorage:GetDescendants()) do
+        if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
+            analysisText = analysisText .. v.ClassName .. ": " .. v:GetFullName() .. "\n"
+        end
+    end
+
+    -- 2. Кнопки и структуры
+    analysisText = analysisText .. "\n=== КНОПКИ И СТРУКТУРЫ ===\n"
+    for _, folder in pairs({Workspace:FindFirstChild("Buttons"), Workspace:FindFirstChild("ExtraButtons"), Workspace:FindFirstChild("RebirthButtons"), Workspace:FindFirstChild("SacrificeButtons")}) do
+        if folder then
+            analysisText = analysisText .. "Папка: " .. folder:GetFullName() .. "\n"
+        end
+    end
+
+    -- 3. leaderstats
+    analysisText = analysisText .. "\n=== ВАЛЮТЫ ===\n"
+    local ls = LocalPlayer:FindFirstChild("leaderstats")
+    if ls then
+        for _, v in pairs(ls:GetChildren()) do
+            analysisText = analysisText .. v.Name .. " = " .. tostring(v.Value) .. "\n"
+        end
+    end
+
+    print(analysisText)
+    
+    if setclipboard then
+        setclipboard(analysisText)
+        Rayfield:Notify({
+            Title = "Анализ готов",
+            Content = "Скопировано в буфер обмена",
+            Duration = 4
+        })
+    else
+        Rayfield:Notify({
+            Title = "Готово",
+            Content = "Смотри Output (F9)",
+            Duration = 4
+        })
+    end
+end
+
+AnalysisTab:CreateButton({
+    Name = "Запустить полный анализ + скопировать",
+    Callback = RunFullAnalysis
+})
+
+AnalysisTab:CreateButton({
+    Name = "Показать анализ в консоли",
+    Callback = function()
+        RunFullAnalysis()
+    end
+})
+
+-- ==================== ЭКСПЛОЙТ ФУНКЦИИ ====================
+
+local autoBasic = false
+local autoExtra = false
+local autoRebirth = false
+local autoPrestige = false
+
+ExploitTab:CreateToggle({
+    Name = "Auto Basic Buttons",
+    CurrentValue = false,
+    Flag = "AutoBasic",
+    Callback = function(Value)
+        autoBasic = Value
+        if Value then
+            task.spawn(function()
+                while autoBasic do
+                    pcall(function() Events.BasicButtonBought:FireServer() end)
+                    task.wait(0.06)
+                end
+            end)
+        end
+    end,
+})
+
+ExploitTab:CreateToggle({
+    Name = "Auto Extra Buttons",
+    CurrentValue = false,
+    Flag = "AutoExtra",
+    Callback = function(Value)
+        autoExtra = Value
+        if Value then
+            task.spawn(function()
+                while autoExtra do
+                    pcall(function() Events.ExtraButtonBought:FireServer() end)
+                    task.wait(0.09)
+                end
+            end)
+        end
+    end,
+})
+
+ExploitTab:CreateToggle({
+    Name = "Auto Rebirth",
+    CurrentValue = false,
+    Flag = "AutoRebirth",
+    Callback = function(Value)
+        autoRebirth = Value
+        if Value then
+            task.spawn(function()
+                while autoRebirth do
+                    pcall(function() Events.TriggerRebirth:FireServer() end)
+                    task.wait(3.5)
+                end
+            end)
+        end
+    end,
+})
+
+ExploitTab:CreateToggle({
+    Name = "Auto Prestige",
+    CurrentValue = false,
+    Flag = "AutoPrestige",
+    Callback = function(Value)
+        autoPrestige = Value
+        if Value then
+            task.spawn(function()
+                while autoPrestige do
+                    pcall(function() Events.TriggerPrestige:FireServer() end)
+                    task.wait(5)
+                end
+            end)
+        end
+    end,
+})
+
+ExploitTab:CreateButton({
+    Name = "Купить всё один раз (мощно)",
+    Callback = function()
+        for i = 1, 40 do
+            pcall(function() Events.BasicButtonBought:FireServer() end)
+            task.wait(0.03)
+        end
+        pcall(function() Events.ExtraButtonBought:FireServer() end)
+        Rayfield:Notify({Title = "Готово", Content = "Массовая покупка выполнена", Duration = 3})
+    end,
+})
+
+-- ==================== MOVEMENT ====================
+MovementTab:CreateToggle({
+    Name = "Speed Hack",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            LocalPlayer.Character.Humanoid.WalkSpeed = 100
+        else
+            LocalPlayer.Character.Humanoid.WalkSpeed = 16
+        end
+    end,
+})
+
+MovementTab:CreateToggle({
+    Name = "Jump Power",
+    CurrentValue = false,
+    Callback = function(Value)
+        if Value then
+            LocalPlayer.Character.Humanoid.JumpPower = 120
+        else
+            LocalPlayer.Character.Humanoid.JumpPower = 50
+        end
+    end,
+})
+
+-- ==================== MISC ====================
+MiscTab:CreateButton({
+    Name = "Anti-Kick (Базовый)",
+    Callback = function()
+        local mt = getrawmetatable(game)
+        local old = mt.__namecall
+        setreadonly(mt, false)
+        mt.__namecall = newcclosure(function(self, ...)
+            if getnamecallmethod() == "Kick" then
+                return
+            end
+            return old(self, ...)
+        end)
+        setreadonly(mt, true)
+        Rayfield:Notify({Title = "Anti-Kick", Content = "Включён", Duration = 3})
+    end,
+})
+
+MiscTab:CreateButton({
+    Name = "Rejoin",
+    Callback = function()
+        game:GetService("TeleportService"):Teleport(game.PlaceId, LocalPlayer)
+    end,
+})
+
+Rayfield:Notify({
+    Title = "Скрипт загружен",
+    Content = "Сначала сделай анализ игры",
+    Duration = 6
+})
+
+print("Vibez Deep Exploit загружен!")
